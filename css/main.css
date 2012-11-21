@@ -93,6 +93,13 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.bits {
+  background-color: #FF0000;
+}
+
+.bitselected {
+  background-color: #00FFFF;
+}
 
 
 

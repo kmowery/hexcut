@@ -8,6 +8,7 @@
       var element = $(this.element);
 
       this.n = 0;
+      this.clicked = null;
 
       element.addClass("bits");
       this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget");
@@ -19,7 +20,11 @@
 
       this.bits = [];
       for(var i = 31; i >= 0; i--) {
-        this.bits[i] = $('<span>').addClass("bit");
+        this.bits[i] = $('<span>').addClass("bit").click(function(loc) {
+          return function(event) {
+            widget.handleClick(loc);
+          }
+        }(i));
         element.append(this.bits[i])
       }
 
@@ -37,6 +42,19 @@
           }
         }
       }
+      this.handleClick = function(loc) {
+        if(this.clicked == null) {
+          this.clicked = loc;
+          this.bits[loc].addClass("bitselected");
+        } else {
+          if( loc != this.clicked ) {
+            alert("build a bridge between " + loc + " and " + this.clicked);
+          }
+          this.bits[this.clicked].removeClass("bitselected");
+          this.clicked = null;
+        }
+      }
+
       this.handleNumber();
     }
 
