@@ -10,7 +10,7 @@
       this.n = 0;
 
       element.addClass("bits");
-      this.numberfield = $('<input type="text">').val("0x0").addClass("ui-widget");
+      this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
         widget.handleNumber();
@@ -50,10 +50,11 @@ properParseInt = function(str) {
   var base = 10;
   var n = 0;
 
-  if(str.length > 2 && str.substring(0,2) == '0x') {
+  if(str.length >= 2 && str.substring(0,2) == '0x') {
+    console.log("hex")
     base = 16;
     i = 2;
-  } else if(str.length > 1 && str.substring(0,1) == '0') {
+  } else if(str.length >= 1 && str.substring(0,1) == '0') {
     base = 8;
     i = 1;
   }
