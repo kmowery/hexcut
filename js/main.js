@@ -7,39 +7,50 @@
       var widget = this;
       var element = $(this.element);
 
+      this.makeUpdateCallback = function(span,loc) {
+        return function() {
+          console.log("update called for " + loc + " with " + widget.n);
+          if(isNaN(widget.n)) { span.text('-'); }
+          else { span.text((widget.n >> loc) & 0x1); }
+        }
+      }
+
       this.n = 0;
       this.clicked = null;
+
+      this.numberfield = null;
+      this.bits = [];
+      this.bridges = [];
+
+      this.updates = [];
 
       element.addClass("bits");
       this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
-        widget.handleNumber();
+        widget.updateNumber();
       });
-      element.append(this.numberfield)
+      element.append(this.numberfield);
 
-      this.bits = [];
+      this.bitfield = $('<div>').addClass("bitfield");
+      element.append(this.bitfield);
+
       for(var i = 31; i >= 0; i--) {
         this.bits[i] = $('<span>').addClass("bit").click(function(loc) {
           return function(event) {
             widget.handleClick(loc);
           }
         }(i));
-        element.append(this.bits[i])
+        this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
+        this.updates.push(this.bits[i]);
+        this.bitfield.append(this.bits[i])
       }
 
       // Make the functions
-      this.handleNumber = function() {
-        if(isNaN(this.n)) {
-          for( var i = 0; i < 32; i++ ) {
-            this.bits[i].text('-');
-          }
-        } else {
-          var bit;
-          for( var i = 0; i < 32; i++ ) {
-            bit = this.n >> i & 0x1;
-            this.bits[i].text(bit);
-          }
+      this.updateNumber = function() {
+        console.log("updateNumber");
+        for(var v in this.updates) {
+          this.updates[v].update();
         }
       }
       this.handleClick = function(loc) {
@@ -48,14 +59,34 @@
           this.bits[loc].addClass("bitselected");
         } else {
           if( loc != this.clicked ) {
-            alert("build a bridge between " + loc + " and " + this.clicked);
+            this.makeBridge(loc, this.clicked);
           }
           this.bits[this.clicked].removeClass("bitselected");
           this.clicked = null;
         }
       }
+      this.makeBridge = function(start, end) {
+        if(start == end) {
+          return;
+        }
+        // TODO: check that this bridge doesn't exist
+        var bitfield = $('<div>').addClass("bitfield");
+        bitfield.start = Math.min(start,end);
+        bitfield.end = Math.max(start,end);
 
-      this.handleNumber();
+        for(var i = bitfield.end - bitfield.start; i >= 0; i-- ) {
+          bitfield.bits[i] = $('<span>').addClass("bit");
+          bitfield.bits[i].update = this.makeUpdateCallback(bitfield.bits[i],
+              i+bitfield.start);
+          widget.updates.push(bitfield.bits[i]);
+          bitfield.append(bitfield.bits[i]);
+        }
+        widget.bridges.push(bitfield);
+        element.append(bitfield);
+        widget.updateNumber();
+      }
+
+      this.updateNumber();
     }
 
   });
