@@ -15,6 +15,7 @@
         }
       }
 
+      this.header = $('<div>');
       this.n = 0;
       this.clicked = null;
 
@@ -25,15 +26,17 @@
       this.updates = [];
 
       element.addClass("bits");
+      element.append(this.header);
+
       this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget numberfield");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
         widget.updateNumber();
       });
-      element.append(this.numberfield);
+      this.header.append(this.numberfield);
 
       this.bitfield = $('<div>').addClass("bitfield");
-      element.append(this.bitfield);
+      this.header.append(this.bitfield);
 
       for(var i = 31; i >= 0; i--) {
         this.bits[i] = $('<span>').addClass("bit").click(function(loc) {
@@ -69,22 +72,49 @@
         if(start == end) {
           return;
         }
-        // TODO: check that this bridge doesn't exist
+
         var bitfield = $('<div>').addClass("bitfield");
         bitfield.start = Math.min(start,end);
         bitfield.end = Math.max(start,end);
 
-        for(var i = bitfield.end - bitfield.start; i >= 0; i-- ) {
+        bitfield.verticalPosition = 0;
+        var reservedSlots = [];
+        for(var i in widget.bridges) {
+          if(widget.bridges[i].start == bitfield.start &&
+              widget.bridges[i].end == bitfield.end) {
+            // This is the same bridge. Don't add.
+            return;
+          }
+
+
+          if(widget.bridges[i].start <= bitfield.end &&
+              widget.bridges[i].end >= bitfield.start) {
+            reservedSlots[widget.bridges[i].verticalPosition] = true;
+          }
+        }
+        while(1) {
+          if(! (bitfield.verticalPosition in reservedSlots)) {
+            break;
+          }
+          bitfield.verticalPosition += 1;
+        }
+
+
+        for(var i = bitfield.end; i >= bitfield.start; i-- ) {
           bitfield.bits[i] = $('<span>').addClass("bit");
-          bitfield.bits[i].update = this.makeUpdateCallback(bitfield.bits[i],
-              i+bitfield.start);
+          bitfield.bits[i].update = this.makeUpdateCallback(bitfield.bits[i], i);
           widget.updates.push(bitfield.bits[i]);
           bitfield.append(bitfield.bits[i]);
         }
-        bitfield.css("margin-left", (32-bitfield.end-1)+"em");
+
         widget.bridges.push(bitfield);
         element.append(bitfield);
         widget.updateNumber();
+
+        bitfield.css("position", "absolute");
+        bitfield.css("left", (32-bitfield.end-1)+"em");
+        bitfield.css("top", widget.header.height() +
+            bitfield.height() * bitfield.verticalPosition);
       }
 
       this.updateNumber();
