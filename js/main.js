@@ -25,7 +25,7 @@
       this.updates = [];
 
       element.addClass("bits");
-      this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget");
+      this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget numberfield");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
         widget.updateNumber();
@@ -81,6 +81,7 @@
           widget.updates.push(bitfield.bits[i]);
           bitfield.append(bitfield.bits[i]);
         }
+        bitfield.css("margin-left", (32-bitfield.end-1)+"em");
         widget.bridges.push(bitfield);
         element.append(bitfield);
         widget.updateNumber();

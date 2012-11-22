@@ -95,6 +95,26 @@ textarea {
 
 .bits {
   background-color: #FF0000;
+  width: auto;
+  display: inline-block;
+}
+
+.bitfield {
+  width: auto;
+}
+
+.numberfield {
+  width: 10em;
+  text-align: center;
+  position: relative;
+  left: 50%;
+  margin-left: -5em;
+}
+
+.bit {
+  width: 1em;
+  display: inline-block;
+  text-align: center;
 }
 
 .bitselected {
