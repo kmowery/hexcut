@@ -93,8 +93,26 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+/* currently using http://www.colourlovers.com/palette/1514529/Peach_Blossoms */
+/* TODO: switch to LESS */
+
+body {
+  background-color: #F8F4D7;
+}
+
+.numberfield {
+  background-color: #F4DEC2;
+  color: #E98977;
+  border-width: 1px;
+  border-color: #E98977;
+}
+
+.numberfield:focus {
+  outline-color: #E98977;
+}
+
 .bits {
-  background-color: #FF0000;
+  /*background-color: #FF0000;*/
   width: auto;
   display: inline-block;
 }
@@ -102,9 +120,10 @@ textarea {
 .bitfield {
   width: auto;
   border-width: 1px;
-  border-color: black;
+  border-color: #E98977;
   border-style: solid;
   border-radius: 0.5pc;
+  background-color: #F4DEC2;
   display:block;
 }
 
@@ -117,7 +136,7 @@ textarea {
 }
 
 .bitid {
-  color: grey;
+  color: #F2B4A8;
   font-size: 0.6pc;
   width: 1pc;
   height: 1em;
@@ -129,26 +148,12 @@ textarea {
   width: 1pc;
   display: inline-block;
   text-align: center;
+  color: #E98977;
 }
 
 .bitselected {
-  background-color: #00FFFF;
+  background-color: #F4B36C;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* ==========================================================================
    Helper classes
