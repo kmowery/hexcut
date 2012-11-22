@@ -101,18 +101,32 @@ textarea {
 
 .bitfield {
   width: auto;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 0.5pc;
+  display:block;
 }
 
 .numberfield {
-  width: 10em;
+  width: 10pc;
   text-align: center;
   position: relative;
   left: 50%;
-  margin-left: -5em;
+  margin-left: -5pc;
+}
+
+.bitid {
+  color: grey;
+  font-size: 0.6pc;
+  width: 1pc;
+  height: 1em;
+  display: inline-block;
+  text-align: center;
 }
 
 .bit {
-  width: 1em;
+  width: 1pc;
   display: inline-block;
   text-align: center;
 }

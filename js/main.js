@@ -38,6 +38,14 @@
       this.bitfield = $('<div>').addClass("bitfield");
       this.header.append(this.bitfield);
 
+      var ids = $('<div>').css('display', 'block');
+      for(var i = 31; i >= 0; i--) {
+        var id = $('<span>').addClass("bitid").text(i);
+        ids.append(id)
+      }
+      this.bitfield.append(ids);
+
+      var bits = $('<div>').css('display', 'block');
       for(var i = 31; i >= 0; i--) {
         this.bits[i] = $('<span>').addClass("bit").click(function(loc) {
           return function(event) {
@@ -46,8 +54,9 @@
         }(i));
         this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
         this.updates.push(this.bits[i]);
-        this.bitfield.append(this.bits[i])
+        bits.append(this.bits[i])
       }
+      this.bitfield.append(bits);
 
       // Make the functions
       this.updateNumber = function() {
