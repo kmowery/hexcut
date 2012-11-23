@@ -94,21 +94,27 @@ textarea {
    ========================================================================== */
 
 /* currently using http://www.colourlovers.com/palette/1514529/Peach_Blossoms */
-/* TODO: switch to LESS */
+
+@bg-color: #F8F4D7;
+@element-color: #F4DEC2;
+@accent-color: #F4B36C;
+@font-color: #E98977;
+@font-fade-color: #F2B4A8;
+@border-color: #E98977;
 
 body {
-  background-color: #F8F4D7;
+  background-color: @bg-color;
 }
 
 .numberfield {
-  background-color: #F4DEC2;
-  color: #E98977;
+  background-color: @element-color;
+  color: @font-color;
   border-width: 1px;
-  border-color: #E98977;
+  border-color: @font-fade-color;
 }
 
 .numberfield:focus {
-  outline-color: #E98977;
+  outline-color: @border-color;
 }
 
 .bits {
@@ -120,10 +126,10 @@ body {
 .bitfield {
   width: auto;
   border-width: 1px;
-  border-color: #E98977;
+  border-color: @border-color;
   border-style: solid;
   border-radius: 0.5pc;
-  background-color: #F4DEC2;
+  background-color: @element-color;
   display:block;
 }
 
@@ -136,7 +142,7 @@ body {
 }
 
 .bitid {
-  color: #F2B4A8;
+  color: @font-fade-color;
   font-size: 0.6pc;
   width: 1pc;
   height: 1em;
@@ -148,11 +154,11 @@ body {
   width: 1pc;
   display: inline-block;
   text-align: center;
-  color: #E98977;
+  color: @font-color;
 }
 
 .bitselected {
-  background-color: #F4B36C;
+  background-color: @accent-color;
 }
 
 /* ==========================================================================
