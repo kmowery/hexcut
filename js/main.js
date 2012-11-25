@@ -41,7 +41,8 @@
 
       var ids = $('<div>');
       for(var i = 31; i >= 0; i--) {
-        this.ids[i] = $('<span>').addClass("bitid").text(i);
+        this.ids[i] = $('<span>').addClass("bitid").text(i).click(function(loc) {
+          return function(event) { widget.handleClick(loc); } }(i));
         ids.append(this.ids[i])
       }
       this.bitfield.append(ids);
