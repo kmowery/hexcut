@@ -21,6 +21,7 @@
 
       this.numberfield = null;
       this.bits = [];
+      this.ids = [];
       this.bridges = [];
 
       this.updates = [];
@@ -40,8 +41,8 @@
 
       var ids = $('<div>');
       for(var i = 31; i >= 0; i--) {
-        var id = $('<span>').addClass("bitid").text(i);
-        ids.append(id)
+        this.ids[i] = $('<span>').addClass("bitid").text(i);
+        ids.append(this.ids[i])
       }
       this.bitfield.append(ids);
 
@@ -69,11 +70,13 @@
         if(this.clicked == null) {
           this.clicked = loc;
           this.bits[loc].addClass("bitselected");
+          this.ids[loc].addClass("bitselected");
         } else {
           if( loc != this.clicked ) {
             this.makeBridge(loc, this.clicked);
           }
           this.bits[this.clicked].removeClass("bitselected");
+          this.ids[this.clicked].removeClass("bitselected");
           this.clicked = null;
         }
       }
