@@ -38,7 +38,7 @@
       this.bitfield = $('<div>').addClass("bitfield");
       this.header.append(this.bitfield);
 
-      var ids = $('<div>').css('display', 'block');
+      var ids = $('<div>');
       for(var i = 31; i >= 0; i--) {
         var id = $('<span>').addClass("bitid").text(i);
         ids.append(id)
