@@ -15,7 +15,8 @@
         }
       }
 
-      this.header = $('<div>');
+      this.header = $('<div>').addClass("header");
+      this.fields = $('<div>').addClass("fields");
       this.n = 0;
       this.clicked = null;
 
@@ -28,6 +29,7 @@
 
       element.addClass("bits");
       element.append(this.header);
+      element.append(this.fields);
 
       this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget numberfield");
       this.numberfield.bind( 'input', function(event) {
@@ -121,13 +123,16 @@
         }
 
         widget.bridges.push(bitfield);
-        element.append(bitfield);
+        widget.fields.append(bitfield);
         widget.updateNumber();
 
         bitfield.css("position", "absolute");
         bitfield.css("left", (32-bitfield.end-1)+"em");
-        bitfield.css("top", widget.header.height() +
-            bitfield.height() * bitfield.verticalPosition);
+        bitfield.css("top", widget.header.outerHeight(true) +
+            bitfield.outerHeight(true) * bitfield.verticalPosition);
+        widget.fields.height(Math.max(widget.fields.height(),
+            bitfield.outerHeight(true) * (bitfield.verticalPosition+1)));
+
       }
 
       this.updateNumber();
