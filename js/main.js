@@ -9,7 +9,7 @@
 
       this.makeUpdateCallback = function(span,loc) {
         return function() {
-          console.log("update called for " + loc + " with " + widget.n);
+          //console.log("update called for " + loc + " with " + widget.n);
           if(isNaN(widget.n)) { span.text('-'); }
           else { span.text((widget.n >> loc) & 0x1); }
         }
@@ -40,6 +40,7 @@
       this.fields = $('<div>').addClass("fields");
       this.n = 0;
       this.clicked = null;
+      this.bitlength = 0;
 
       this.numberfield = null;
       this.bits = [];
@@ -66,34 +67,13 @@
       this.number.append(this.bitfield);
       this.header.append(this.number);
 
-      var ids = $('<div>');
-      for(var i = 31; i >= 0; i--) {
-        this.ids[i] = $('<span>').addClass("bitid").text(i)
-          .mouseenter(this.makeMouseEnterCallback(i))
-          .click(function(loc) {
-          return function(event) { widget.handleClick(loc); } }(i));
-        ids.append(this.ids[i])
-      }
-      this.bitfield.append(ids);
-
-      var bits = $('<div>').css('display', 'block');
-      for(var i = 31; i >= 0; i--) {
-        this.bits[i] = $('<span>').addClass("bit")
-          .mouseenter(this.makeMouseEnterCallback(i))
-          .click(function(loc) {
-          return function(event) {
-            widget.handleClick(loc);
-          }
-        }(i));
-        this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
-        this.updates.push(this.bits[i]);
-        bits.append(this.bits[i])
-      }
-      this.bitfield.append(bits);
+      this.iddiv = $('<div>');
+      this.bitfield.append(this.iddiv);
+      this.bitdiv = $('<div>').css('display', 'block');
+      this.bitfield.append(this.bitdiv);
 
       // Make the functions
       this.updateNumber = function() {
-        console.log("updateNumber");
         for(var v in this.updates) {
           this.updates[v].update();
         }
@@ -170,7 +150,27 @@
             bridge.outerHeight(true) * (bridge.verticalPosition+1)));
 
       }
+      this.extend = function(length) {
+        for(var i = this.bitlength; i < length; i++) {
+          this.ids[i] = $('<span>').addClass("bitid").text(i)
+            .mouseenter(this.makeMouseEnterCallback(i))
+            .click(function(loc) {
+              return function(event) { widget.handleClick(loc); } }(i));
+          this.iddiv.prepend(this.ids[i])
 
+          this.bits[i] = $('<span>').addClass("bit")
+            .mouseenter(this.makeMouseEnterCallback(i))
+            .click(function(loc) {
+              return function(event) { widget.handleClick(loc); } }(i));
+          console.log(i);
+          this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
+          this.updates.push(this.bits[i]);
+          this.bitdiv.prepend(this.bits[i])
+        }
+        this.bitlength = length;
+      }
+
+      this.extend(32);
       this.updateNumber();
       this.makeBridge(6,4);
       this.makeBridge(2,0);
