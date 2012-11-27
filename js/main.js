@@ -14,6 +14,13 @@
           else { span.text((widget.n >> loc) & 0x1); }
         }
       }
+      this.makeFieldUpdateCallback = function(span,start,end) {
+        return function() {
+          if(isNaN(widget.n)) { span.text('-'); }
+          else { span.text( "0x" +
+            ((widget.n >> start) & (Math.pow(2,end-start+1)-1)).toString(16)); }
+        }
+      }
 
       this.header = $('<div>').addClass("header");
       this.fields = $('<div>').addClass("fields");
@@ -27,19 +34,22 @@
 
       this.updates = [];
 
-      element.addClass("bits");
+      element.addClass("widget");
       element.append(this.header);
       element.append(this.fields);
 
-      this.numberfield = $('<input type="text">').val("0x").addClass("ui-widget numberfield");
+      this.numberfield = $('<input type="text">').val("0x")
+        .addClass("ui-widget numberfield");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
         widget.updateNumber();
       });
       this.header.append(this.numberfield);
 
+      this.number = $('<div>').addClass("field");
       this.bitfield = $('<div>').addClass("bitfield");
-      this.header.append(this.bitfield);
+      this.number.append(this.bitfield);
+      this.header.append(this.number);
 
       var ids = $('<div>');
       for(var i = 31; i >= 0; i--) {
@@ -88,50 +98,58 @@
           return;
         }
 
-        var bitfield = $('<div>').addClass("bitfield");
-        bitfield.start = Math.min(start,end);
-        bitfield.end = Math.max(start,end);
+        var bridge = $('<div>').addClass("bridge field");
 
-        bitfield.verticalPosition = 0;
+        bridge.bitfield = $('<div>').addClass("bitfield");
+        bridge.start = Math.min(start,end);
+        bridge.end = Math.max(start,end);
+
+        bridge.verticalPosition = 0;
         var reservedSlots = [];
         for(var i in widget.bridges) {
-          if(widget.bridges[i].start == bitfield.start &&
-              widget.bridges[i].end == bitfield.end) {
+          if(widget.bridges[i].start == bridge.start &&
+              widget.bridges[i].end == bridge.end) {
             // This is the same bridge. Don't add.
             return;
           }
 
 
-          if(widget.bridges[i].start <= bitfield.end &&
-              widget.bridges[i].end >= bitfield.start) {
+          if(widget.bridges[i].start <= bridge.end &&
+              widget.bridges[i].end >= bridge.start) {
             reservedSlots[widget.bridges[i].verticalPosition] = true;
           }
         }
         while(1) {
-          if(! (bitfield.verticalPosition in reservedSlots)) {
+          if(! (bridge.verticalPosition in reservedSlots)) {
             break;
           }
-          bitfield.verticalPosition += 1;
+          bridge.verticalPosition += 1;
         }
 
-
-        for(var i = bitfield.end; i >= bitfield.start; i-- ) {
-          bitfield.bits[i] = $('<span>').addClass("bit");
-          bitfield.bits[i].update = this.makeUpdateCallback(bitfield.bits[i], i);
-          widget.updates.push(bitfield.bits[i]);
-          bitfield.append(bitfield.bits[i]);
+        for(var i = bridge.end; i >= bridge.start; i-- ) {
+          bridge.bits[i] = $('<span>').addClass("bitid");
+          bridge.bits[i].update = this.makeUpdateCallback(bridge.bits[i], i);
+          widget.updates.push(bridge.bits[i]);
+          bridge.bitfield.append(bridge.bits[i]);
         }
+        bridge.append(bridge.bitfield);
 
-        widget.bridges.push(bitfield);
-        widget.fields.append(bitfield);
+        bridge.hex = $('<span>').addClass("bridgevalue");
+        bridge.hex.update = this.makeFieldUpdateCallback(bridge.hex,
+            bridge.start, bridge.end);
+        widget.updates.push(bridge.hex);
+        bridge.append(bridge.hex);
+
+        widget.bridges.push(bridge);
+        widget.fields.append(bridge);
         widget.updateNumber();
 
-        bitfield.css("position", "absolute");
-        bitfield.css("left", (32-bitfield.end-1)+"em");
-        bitfield.css("top", widget.header.outerHeight(true) +
-            bitfield.outerHeight(true) * bitfield.verticalPosition);
+        bridge.css("position", "absolute");
+        bridge.css("left", (32-bridge.end-1)+"em");
+        bridge.css("top", widget.header.outerHeight(true) +
+            bridge.outerHeight(true) * bridge.verticalPosition);
         widget.fields.height(Math.max(widget.fields.height(),
-            bitfield.outerHeight(true) * (bitfield.verticalPosition+1)));
+            bridge.outerHeight(true) * (bridge.verticalPosition+1)));
 
       }
 

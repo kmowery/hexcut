@@ -111,39 +111,27 @@ body {
   position: relative;
   left: 50%;
   margin-left: -16pc;
+  width: auto;
+  float:left;
 }
 
 .numberfield {
   background-color: @element-color;
   color: @font-color;
-  border-width: 1px;
   border-color: @font-fade-color;
+  border-width: 1px;
+  width: 10pc;
+  text-align: center;
+  position: relative;
 }
 
 .numberfield:focus {
   outline-color: @border-color;
 }
 
-.bits {
-  /*background-color: #FF0000;*/
-  width: auto;
-  display: inline-block;
-}
-
 .bitfield {
   width: auto;
-  border-width: 1px;
-  border-color: @border-color;
-  border-style: solid;
-  border-radius: 0.5pc;
-  background-color: @element-color;
-  display:block;
-}
-
-.numberfield {
-  width: 10pc;
-  text-align: center;
-  position: relative;
+  display: block;
 }
 
 .bitid {
@@ -163,6 +151,21 @@ body {
 
 .bitselected {
   background-color: @accent-color;
+}
+
+.bridge {
+}
+
+.bridgevalue {
+  color: @font-color;
+}
+
+.field {
+  border-width: 1px;
+  border-color: @border-color;
+  border-style: solid;
+  border-radius: 0.5pc;
+  background-color: @element-color;
 }
 
 /* ==========================================================================
