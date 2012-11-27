@@ -21,6 +21,20 @@
             ((widget.n >> start) & (Math.pow(2,end-start+1)-1)).toString(16)); }
         }
       }
+      this.makeMouseEnterCallback = function(loc) {
+        return function() {
+          if(widget.clicked != null) {
+            $(".bitselected").removeClass("bitselected");
+            for(var i = 0; i < 32; i++) {
+              if( i >= Math.min(widget.clicked, loc) &&
+                  i <= Math.max(widget.clicked, loc) ) {
+                widget.bits[i].addClass("bitselected");
+                widget.ids[i].addClass("bitselected");
+              }
+            }
+          }
+        }
+      }
 
       this.header = $('<div>').addClass("header");
       this.fields = $('<div>').addClass("fields");
@@ -54,7 +68,9 @@
 
       var ids = $('<div>');
       for(var i = 31; i >= 0; i--) {
-        this.ids[i] = $('<span>').addClass("bitid").text(i).click(function(loc) {
+        this.ids[i] = $('<span>').addClass("bitid").text(i)
+          .mouseenter(this.makeMouseEnterCallback(i))
+          .click(function(loc) {
           return function(event) { widget.handleClick(loc); } }(i));
         ids.append(this.ids[i])
       }
@@ -62,7 +78,9 @@
 
       var bits = $('<div>').css('display', 'block');
       for(var i = 31; i >= 0; i--) {
-        this.bits[i] = $('<span>').addClass("bit").click(function(loc) {
+        this.bits[i] = $('<span>').addClass("bit")
+          .mouseenter(this.makeMouseEnterCallback(i))
+          .click(function(loc) {
           return function(event) {
             widget.handleClick(loc);
           }
@@ -89,8 +107,7 @@
           if( loc != this.clicked ) {
             this.makeBridge(loc, this.clicked);
           }
-          this.bits[this.clicked].removeClass("bitselected");
-          this.ids[this.clicked].removeClass("bitselected");
+          $(".bitselected").removeClass("bitselected");
           this.clicked = null;
         }
       }
