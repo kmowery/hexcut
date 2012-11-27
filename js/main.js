@@ -45,6 +45,7 @@
         widget.updateNumber();
       });
       this.header.append(this.numberfield);
+      this.numberfield.focus();
 
       this.number = $('<div>').addClass("field");
       this.bitfield = $('<div>').addClass("bitfield");
@@ -154,6 +155,9 @@
       }
 
       this.updateNumber();
+      this.makeBridge(6,4);
+      this.makeBridge(2,0);
+      this.makeBridge(8,0);
     }
 
   });
