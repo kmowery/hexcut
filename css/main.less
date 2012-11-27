@@ -93,14 +93,14 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-/* currently using http://www.colourlovers.com/palette/1514529/Peach_Blossoms */
+/* currently using http://www.colourlovers.com/palette/590207/d_a_y_d_r_e_a_m_e_r */
 
-@bg-color: #F8F4D7;
-@element-color: #F4DEC2;
-@accent-color: #F4B36C;
-@font-color: #E98977;
-@font-fade-color: #F2B4A8;
-@border-color: #E98977;
+@bg-color: #939E78;
+@element-color: #A8A878;
+@highlight-color: #CDCD76;
+@font-color: #061013;
+@font-fade-color: #839074;
+@border-color: #061013;
 
 body {
   background-color: @bg-color;
@@ -120,7 +120,7 @@ body {
   background-color: @element-color;
   color: @font-color;
   border-color: @font-fade-color;
-  border-width: 1px;
+  border-width: 0.15em;
   border-radius: 0.5pc;
   width: 10pc;
   text-align: center;
@@ -130,6 +130,7 @@ body {
 
 .numberfield:focus {
   outline-color: @border-color;
+  border-radius: 0.5pc;
 }
 
 .bitfield {
@@ -153,7 +154,7 @@ body {
 }
 
 .bitselected {
-  background-color: @accent-color;
+  background-color: @highlight-color;
 }
 
 .bridge {
@@ -165,7 +166,7 @@ body {
 }
 
 .field {
-  border-width: 1px;
+  border-width: 0.15em;
   border-color: @border-color;
   border-style: solid;
   border-radius: 0.5pc;
