@@ -80,7 +80,7 @@
 
       this.header = $('<div>').addClass("header");
       this.fields = $('<div>').addClass("fields");
-      this.n = NaN;
+      this.n = BigInteger("0");
       this.clicked = null;
       this.bitlength = 0;
 
@@ -222,7 +222,7 @@
 properParseInt = function(str) {
   try {
     result = getBase(str);
-    return BigInteger(result[1],result[0]);
+    return BigInteger("0"+result[1],result[0]);
   } catch (e) {
     return NaN;
   }
