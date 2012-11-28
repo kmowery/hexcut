@@ -10,4 +10,5 @@
 
     HTML5, CSS3
     jQuery, Modernizr
+    bigdecimal.js  -- https://github.com/iriscouch/bigdecimal.js
 

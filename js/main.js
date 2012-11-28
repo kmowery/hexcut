@@ -9,23 +9,28 @@
 
       this.makeUpdateCallback = function(span,loc) {
         return function() {
-          //console.log("update called for " + loc + " with " + widget.n);
           if(isNaN(widget.n)) { span.text('-'); }
-          else { span.text((widget.n >> loc) & 0x1); }
+          else {
+            span.text(widget.n.testBit(loc) ? "1" : "0");
+          }
         }
       }
       this.makeFieldUpdateCallback = function(span,start,end) {
         return function() {
           if(isNaN(widget.n)) { span.text('-'); }
-          else { span.text( "0x" +
-            ((widget.n >> start) & (Math.pow(2,end-start+1)-1)).toString(16)); }
+          else {
+            var lower = BigInteger("0").setBit(start);
+            var width = BigInteger("0").setBit(end-start+1);
+
+            span.text("0x" + widget.n.divide(lower).remainder(width).toString(16));
+          }
         }
       }
       this.makeMouseEnterCallback = function(loc) {
         return function() {
           if(widget.clicked != null) {
             $(".bitselected").removeClass("bitselected");
-            for(var i = 0; i < 32; i++) {
+            for(var i = 0; i < widget.bitlength; i++) {
               if( i >= Math.min(widget.clicked, loc) &&
                   i <= Math.max(widget.clicked, loc) ) {
                 widget.bits[i].addClass("bitselected");
@@ -35,10 +40,25 @@
           }
         }
       }
+      this.makeClickCallback = function(loc) {
+        return function() {
+          if(widget.clicked == null) {
+            widget.clicked = loc;
+            widget.bits[loc].addClass("bitselected");
+            widget.ids[loc].addClass("bitselected");
+          } else {
+            if( loc != widget.clicked ) {
+              widget.makeBridge(loc, widget.clicked);
+            }
+            $(".bitselected").removeClass("bitselected");
+            widget.clicked = null;
+          }
+        }
+      }
 
       this.header = $('<div>').addClass("header");
       this.fields = $('<div>').addClass("fields");
-      this.n = 0;
+      this.n = NaN;
       this.clicked = null;
       this.bitlength = 0;
 
@@ -57,6 +77,9 @@
         .addClass("ui-widget numberfield");
       this.numberfield.bind( 'input', function(event) {
         widget.n = properParseInt(widget.numberfield.val());
+        if( !isNaN(widget.n) ) {
+          widget.extend(Math.max(widget.bitlength, widget.n.bitLength()));
+        }
         widget.updateNumber();
       });
       this.header.append(this.numberfield);
@@ -76,19 +99,6 @@
       this.updateNumber = function() {
         for(var v in this.updates) {
           this.updates[v].update();
-        }
-      }
-      this.handleClick = function(loc) {
-        if(this.clicked == null) {
-          this.clicked = loc;
-          this.bits[loc].addClass("bitselected");
-          this.ids[loc].addClass("bitselected");
-        } else {
-          if( loc != this.clicked ) {
-            this.makeBridge(loc, this.clicked);
-          }
-          $(".bitselected").removeClass("bitselected");
-          this.clicked = null;
         }
       }
       this.makeBridge = function(start, end) {
@@ -143,7 +153,7 @@
         widget.updateNumber();
 
         bridge.css("position", "absolute");
-        bridge.css("left", (32-bridge.end-1)+"em");
+        bridge.css("right", (bridge.start)+"em");
         bridge.css("top", widget.header.outerHeight(true) +
             bridge.outerHeight(true) * bridge.verticalPosition);
         widget.fields.height(Math.max(widget.fields.height(),
@@ -154,20 +164,18 @@
         for(var i = this.bitlength; i < length; i++) {
           this.ids[i] = $('<span>').addClass("bitid").text(i)
             .mouseenter(this.makeMouseEnterCallback(i))
-            .click(function(loc) {
-              return function(event) { widget.handleClick(loc); } }(i));
+            .click(this.makeClickCallback(i));
           this.iddiv.prepend(this.ids[i])
 
           this.bits[i] = $('<span>').addClass("bit")
             .mouseenter(this.makeMouseEnterCallback(i))
-            .click(function(loc) {
-              return function(event) { widget.handleClick(loc); } }(i));
-          console.log(i);
+            .click(this.makeClickCallback(i));
           this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
           this.updates.push(this.bits[i]);
           this.bitdiv.prepend(this.bits[i])
         }
         this.bitlength = length;
+        element.css('margin-left', '-' + (length/2) + 'em');
       }
 
       this.extend(32);
@@ -181,26 +189,23 @@
 })(jQuery);
 
 // JavaScript's parseInt is terrible. parseInt('0xNOTANUMBER') returns 0.
-// Fix it.
+// Fix it and return a BigInteger.
 properParseInt = function(str) {
-  var i = 0;
   var base = 10;
-  var n = 0;
 
   if(str.length >= 2 && str.substring(0,2) == '0x') {
-    console.log("hex")
     base = 16;
-    i = 2;
+    str = str.substr(2);
   } else if(str.length >= 1 && str.substring(0,1) == '0') {
     base = 8;
-    i = 1;
+    str = str.substr(1);
   }
 
-  for( ; i < str.length; i++ ) {
-    n = n * base + parseInt(str[i], base);
+  try {
+    return BigInteger(str, base);
+  } catch (e) {
+    return NaN;
   }
-
-  return n;
 }
 
 $(document).ready(function() {
