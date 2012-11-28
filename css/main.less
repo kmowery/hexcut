@@ -162,7 +162,14 @@ body {
 }
 
 .bridgevalue {
+  background-color: @element-color;
   color: @font-color;
+  border: 0px;
+  text-align: center;
+}
+.bridgevalue:focus {
+  outline-color: @border-color;
+  border-radius: 0.5pc;
 }
 
 .field {

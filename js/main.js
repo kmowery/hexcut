@@ -15,15 +15,37 @@
           }
         }
       }
-      this.makeFieldUpdateCallback = function(span,start,end) {
+      this.makeFieldUpdateCallback = function(input,start,end) {
         return function() {
-          if(isNaN(widget.n)) { span.text('-'); }
+          if(isNaN(widget.n)) { input.val('-'); }
           else {
             var lower = BigInteger("0").setBit(start);
             var width = BigInteger("0").setBit(end-start+1);
 
-            span.text("0x" + widget.n.divide(lower).remainder(width).toString(16));
+            input.val("0x" + widget.n.divide(lower).remainder(width).toString(16));
           }
+        }
+      }
+      this.makeFieldInputCallback = function(bridge) {
+        return function(event) {
+          try {
+            var temp = properParseInt($(this).val());
+
+            if(!isNaN(widget.n)) {
+              for(var i = bridge.start; i <= bridge.end; i++) {
+                if(temp.testBit(i-bridge.start)) {
+                  widget.n = widget.n.setBit(i);
+                } else {
+                  widget.n = widget.n.clearBit(i);
+                }
+              }
+            }
+          } catch (e) {
+            // Ignore this update
+          }
+          widget.updateNumber();
+          widget.pushbackNumber();
+          return false;
         }
       }
       this.makeMouseEnterCallback = function(loc) {
@@ -101,6 +123,11 @@
           this.updates[v].update();
         }
       }
+      // Take whatever this.n is, and put it up into this.numberfield
+      this.pushbackNumber = function() {
+        base = getBase(this.numberfield.val())[0];
+        this.numberfield.val(formatNumber(base, this.n));
+      }
       this.makeBridge = function(start, end) {
         if(start == end) {
           return;
@@ -142,7 +169,9 @@
         }
         bridge.append(bridge.bitfield);
 
-        bridge.hex = $('<span>').addClass("bridgevalue");
+        bridge.hex = $('<input type="text">').addClass("bridgevalue")
+          .css('width', (bridge.end-bridge.start) + "em")
+           .on("input", widget.makeFieldInputCallback(bridge));
         bridge.hex.update = this.makeFieldUpdateCallback(bridge.hex,
             bridge.start, bridge.end);
         widget.updates.push(bridge.hex);
@@ -191,20 +220,37 @@
 // JavaScript's parseInt is terrible. parseInt('0xNOTANUMBER') returns 0.
 // Fix it and return a BigInteger.
 properParseInt = function(str) {
-  var base = 10;
-
-  if(str.length >= 2 && str.substring(0,2) == '0x') {
-    base = 16;
-    str = str.substr(2);
-  } else if(str.length >= 1 && str.substring(0,1) == '0') {
-    base = 8;
-    str = str.substr(1);
-  }
-
   try {
-    return BigInteger(str, base);
+    result = getBase(str);
+    return BigInteger(result[1],result[0]);
   } catch (e) {
     return NaN;
+  }
+}
+
+formatNumber = function(base, bigint) {
+  if(isNaN(bigint)) {
+    return "0x";
+  }
+  if(base == 16) {
+    return "0x" + bigint.toString(16);
+  } else if(base == 8) {
+    return "0" + bigint.toString(16);
+  } else if(base == 10) {
+    return bigint.toString(10);
+  } else {
+    throw "Don't know how to format base " + base;
+  }
+}
+
+// Returns the [base,number_str] given a string
+getBase = function(str) {
+  if(str.length >= 2 && str.substring(0,2) == '0x') {
+    return [16, str.substr(2)];
+  } else if(str.length >= 1 && str.substring(0,1) == '0') {
+    return [8, str.substr(1)];
+  } else {
+    return [10, str];
   }
 }
 
