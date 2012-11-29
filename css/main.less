@@ -101,6 +101,7 @@ textarea {
 @font-color: #061013;
 @font-fade-color: #061013;
 @border-color: #061013;
+@br: 0.5pc;
 
 body {
   background-color: @bg-color;
@@ -116,12 +117,26 @@ body {
   float:left;
 }
 
+.topleft {
+  border-top-left-radius: @br;
+}
+.topright {
+  border-top-right-radius: @br;
+}
+.bottomleft {
+  border-bottom-left-radius: @br;
+}
+.bottomright {
+  border-bottom-right-radius: @br;
+}
+
+
 .numberfield {
   background-color: @element-color;
   color: @font-color;
   border-color: @font-fade-color;
   border-width: 0.15em;
-  border-radius: 0.5pc;
+  border-radius: @br;
   width: 10pc;
   text-align: center;
   position: relative;
@@ -130,7 +145,7 @@ body {
 
 .numberfield:focus {
   outline-color: @border-color;
-  border-radius: 0.5pc;
+  border-radius: @br;
 }
 
 .bitfield {
@@ -169,14 +184,14 @@ body {
 }
 .bridgevalue:focus {
   outline-color: @border-color;
-  border-radius: 0.5pc;
+  border-radius: @br;
 }
 
 .field {
   border-width: 0.15em;
   border-color: @border-color;
   border-style: solid;
-  border-radius: 0.5pc;
+  border-radius: @br;
   background-color: @element-color;
 }
 

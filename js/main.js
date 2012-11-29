@@ -190,6 +190,10 @@
 
       }
       this.extend = function(length) {
+        if(this.bitlength > 0) {
+          this.ids[this.bitlength-1].removeClass("topleft");
+          this.bits[this.bitlength-1].removeClass("bottomleft");
+        }
         for(var i = this.bitlength; i < length; i++) {
           this.ids[i] = $('<span>').addClass("bitid").text(i)
             .mouseenter(this.makeMouseEnterCallback(i))
@@ -203,6 +207,12 @@
           this.updates.push(this.bits[i]);
           this.bitdiv.prepend(this.bits[i])
         }
+        this.ids[0].addClass("topright");
+        this.bits[0].addClass("bottomright");
+        this.ids[length-1].addClass("topleft");
+        this.bits[length-1].addClass("bottomleft");
+
+
         this.bitlength = length;
         element.css('margin-left', '-' + (length/2) + 'em');
       }
