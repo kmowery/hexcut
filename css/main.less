@@ -100,7 +100,7 @@ textarea {
 @field-color: #E8F3F8;
 
 @highlight-color: #FDFCFC;
-@font-color: #81A8B8;
+@font-color: #6F919E;
 @font-fade-color: #A4BCC2;
 @border-color: @field-color;
 
@@ -109,21 +109,46 @@ textarea {
 
 body {
   background-color: @bg-color;
+  color: @font-color;
+}
+a:link {
+  color: @font-color;
+}
+a:visited {
+  color: @font-fade-color;
+}
+
+#title {
+  font-family: 'Gill Sans', sans-serif;
+  font-size: 6em;
+  text-align: center;
+}
+
+#nav {
+  font-family: 'Gill Sans', sans-serif;
+  text-align: center;
+  font-size: 2em;
+  margin-top: -0.3em;
+  margin-bottom: 0.6em;
+}
+
+#nav span {
+  margin-left: 1em;
+  margin-right: 1em;
 }
 
 #hook {
   text-align: center;
   position: relative;
   left: 50%;
-  margin-left: -16pc;
-  margin-top: 1em;
+  margin-left: -17pc;
   width: auto;
   float:left;
 
-  padding-top: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
+  padding-top: 0.5em;
+  padding-left: 1pc;
+  padding-right: 1pc;
+  padding-bottom: 0.4em;
 
   background-color: @element-color;
 
