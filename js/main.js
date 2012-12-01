@@ -183,8 +183,10 @@
 
         bridge.css("position", "absolute");
         bridge.css("right", (bridge.start)+"em");
+        bridge.css("right", "+=" + element.css('padding-right'));
         bridge.css("top", widget.header.outerHeight(true) +
             bridge.outerHeight(true) * bridge.verticalPosition);
+        bridge.css("top", "+=" + element.css('padding-top'));
         widget.fields.height(Math.max(widget.fields.height(),
             bridge.outerHeight(true) * (bridge.verticalPosition+1)));
 
