@@ -95,17 +95,17 @@ textarea {
 
 /* currently using http://www.colourlovers.com/palette/490780/The_First_Raindrop */
 
-@bg-color: #DBE6EC;
-@element-color: #81A8B8;
-@field-color: #E8F3F8;
+@bg-color: #FFFFFF;
+@element-color: #C1C1C1;
+@field-color: #EFEFEF;
 
-@highlight-color: #FDFCFC;
-@font-color: #6F919E;
-@font-fade-color: #A4BCC2;
-@border-color: @field-color;
+@highlight-color: #FFFFFF;
+@font-color: #000000;
+@font-fade-color: #040E11;
+@border-color: @font-fade-color;
 
 @border-radius: 0.5pc;
-@border-width: 0.30em;
+@border-width: .2em;
 
 body {
   background-color: @bg-color;
@@ -143,16 +143,19 @@ a:visited {
   left: 50%;
   margin-left: -17pc;
   width: auto;
-  float:left;
+  float: left;
 
   padding-top: 0.5em;
-  padding-left: 1pc;
-  padding-right: 1pc;
+  padding-left: 0.4em;
+  padding-right: 0.4em;
   padding-bottom: 0.4em;
 
   background-color: @element-color;
 
+  border-color: @border-color;
+  border-width: @border-width;
   border-radius: @border-radius;
+  border-style: solid;
 }
 
 .topleft {
@@ -172,7 +175,7 @@ a:visited {
 .numberfield {
   background-color: @field-color;
   color: @font-color;
-  border-color: @font-fade-color;
+  border-color: @border-color;
   border-width: @border-width;
   border-radius: @border-radius;
   width: 10pc;
@@ -218,6 +221,7 @@ a:visited {
 
 .bridge {
   margin-top: 0.4em;
+  position: absolute;
 }
 
 .bridgevalue {
