@@ -134,32 +134,45 @@
         }
 
         var bridge = $('<div>').addClass("bridge field");
+        bridge.delete = function() {
+          // Delete all updates
+          for(var i in bridge.bits) {
+            removeFromArray(widget.updates,bridge.bits[i]);
+          }
+          removeFromArray(widget.updates,bridge.hex);
+          removeFromArray(widget.bridges,bridge);
+          bridge.remove();
+          widget.reflowBridges();
+        }
+        bridge.flow = function() {
+          bridge.verticalPosition = 0;
+          var reservedSlots = [];
+          var place = widget.bridges.indexOf(bridge);
+          for(var i = 0; i < place; i++) {
+            if(widget.bridges[i].start <= bridge.end &&
+                widget.bridges[i].end >= bridge.start) {
+              reservedSlots[widget.bridges[i].verticalPosition] = true;
+            }
+          }
+          while(1) {
+            if(! (bridge.verticalPosition in reservedSlots)) { break; }
+            bridge.verticalPosition += 1;
+          }
+
+          bridge.css("right", (bridge.start)+"em");
+          bridge.css("right", "+=" + element.css('padding-right'));
+          bridge.css("top", widget.header.outerHeight(true) +
+              bridge.outerHeight(true) * bridge.verticalPosition);
+          bridge.css("top", "+=" + element.css('padding-top'));
+          widget.fields.height(Math.max(widget.fields.height(),
+                bridge.outerHeight(true) * (bridge.verticalPosition+1)));
+          return bridge.verticalPosition;
+        }
 
         bridge.bitfield = $('<div>').addClass("bitfield");
         bridge.start = Math.min(start,end);
         bridge.end = Math.max(start,end);
 
-        bridge.verticalPosition = 0;
-        var reservedSlots = [];
-        for(var i in widget.bridges) {
-          if(widget.bridges[i].start == bridge.start &&
-              widget.bridges[i].end == bridge.end) {
-            // This is the same bridge. Don't add.
-            return;
-          }
-
-
-          if(widget.bridges[i].start <= bridge.end &&
-              widget.bridges[i].end >= bridge.start) {
-            reservedSlots[widget.bridges[i].verticalPosition] = true;
-          }
-        }
-        while(1) {
-          if(! (bridge.verticalPosition in reservedSlots)) {
-            break;
-          }
-          bridge.verticalPosition += 1;
-        }
 
         for(var i = bridge.end; i >= bridge.start; i-- ) {
           bridge.bits[i] = $('<span>').addClass("bitid");
@@ -181,15 +194,17 @@
         widget.fields.append(bridge);
         widget.updateNumber();
 
-        bridge.css("position", "absolute");
-        bridge.css("right", (bridge.start)+"em");
-        bridge.css("right", "+=" + element.css('padding-right'));
-        bridge.css("top", widget.header.outerHeight(true) +
-            bridge.outerHeight(true) * bridge.verticalPosition);
-        bridge.css("top", "+=" + element.css('padding-top'));
-        widget.fields.height(Math.max(widget.fields.height(),
-            bridge.outerHeight(true) * (bridge.verticalPosition+1)));
+        bridge.close = $('<a>').addClass("close").click(bridge.delete);
+        bridge.append(bridge.close);
+        bridge.on('hover', function(event) {
+          if(event.type === "mouseenter") {
+            bridge.close.fadeIn();
+          } else {
+            bridge.close.fadeOut();
+          }
+        });
 
+        bridge.flow();
       }
       this.extend = function(length) {
         if(this.bitlength > 0) {
@@ -214,9 +229,20 @@
         this.ids[length-1].addClass("topleft");
         this.bits[length-1].addClass("bottomleft");
 
-
         this.bitlength = length;
-        element.css('margin-left', '-' + (length/2) + 'em');
+        element.css('margin-left', '-' + (length/2 + 1) + 'pc');
+      }
+      this.reflowBridges = function() {
+        var maxheight = 0;
+        for(var i in this.bridges) {
+          maxheight = Math.max(maxheight,this.bridges[i].flow());
+        }
+        if(this.bridges.length > 0) {
+          widget.fields.height( this.bridges[0].outerHeight(true) *
+              (maxheight + 1) );
+        } else {
+          widget.fields.height(0);
+        }
       }
 
       this.extend(32);
@@ -264,6 +290,13 @@ getBase = function(str) {
   } else {
     return [10, str];
   }
+}
+
+// Can't patch this into Array.prototype, otherwise BigInteger fails with some
+// horrible error.
+removeFromArray = function(array, item) {
+  var loc = array.indexOf(item);
+  if( loc != -1 ) { array.splice(loc, 1); }
 }
 
 $(document).ready(function() {
