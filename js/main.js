@@ -71,51 +71,57 @@
           } else {
             if( loc != widget.clicked ) {
               widget.makeBridge(loc, widget.clicked);
+              widget.updateState();
             }
             $(".bitselected").removeClass("bitselected");
             widget.clicked = null;
           }
         }
       }
+      this.reset = function() {
+        element.empty();
 
-      this.header = $('<div>').addClass("header");
-      this.fields = $('<div>').addClass("fields");
-      this.n = BigInteger("0");
-      this.clicked = null;
-      this.bitlength = 0;
+        this.header = $('<div>').addClass("header");
+        this.fields = $('<div>').addClass("fields");
+        this.n = BigInteger("0");
+        this.clicked = null;
+        this.bitlength = 0;
 
-      this.numberfield = null;
-      this.bits = [];
-      this.ids = [];
-      this.bridges = [];
+        this.numberfield = null;
+        this.bits = [];
+        this.ids = [];
+        this.bridges = [];
 
-      this.updates = [];
+        this.updates = [];
 
-      element.addClass("widget");
-      element.append(this.header);
-      element.append(this.fields);
+        element.addClass("widget");
+        element.append(this.header);
+        element.append(this.fields);
 
-      this.numberfield = $('<input type="text">').val("0x")
-        .addClass("ui-widget numberfield");
-      this.numberfield.bind( 'input', function(event) {
-        widget.n = properParseInt(widget.numberfield.val());
-        if( !isNaN(widget.n) ) {
-          widget.extend(Math.max(widget.bitlength, widget.n.bitLength()));
-        }
-        widget.updateNumber();
-      });
-      this.header.append(this.numberfield);
-      this.numberfield.focus();
+        this.numberfield = $('<input type="text">').val("0x")
+          .addClass("ui-widget numberfield");
+        this.numberfield.bind( 'input', function(event) {
+          widget.n = properParseInt(widget.numberfield.val());
+          if( !isNaN(widget.n) ) {
+            widget.extend(Math.max(widget.bitlength, widget.n.bitLength()));
+          }
+          widget.updateNumber();
+        });
+        this.header.append(this.numberfield);
+        this.numberfield.focus();
 
-      this.number = $('<div>').addClass("field");
-      this.bitfield = $('<div>').addClass("bitfield");
-      this.number.append(this.bitfield);
-      this.header.append(this.number);
+        this.number = $('<div>').addClass("field");
+        this.bitfield = $('<div>').addClass("bitfield");
+        this.number.append(this.bitfield);
+        this.header.append(this.number);
 
-      this.iddiv = $('<div>');
-      this.bitfield.append(this.iddiv);
-      this.bitdiv = $('<div>').css('display', 'block');
-      this.bitfield.append(this.bitdiv);
+        this.iddiv = $('<div>');
+        this.bitfield.append(this.iddiv);
+        this.bitdiv = $('<div>').css('display', 'block');
+        this.bitfield.append(this.bitdiv);
+
+        this.state = this.makeState();
+      }
 
       // Make the functions
       this.updateNumber = function() {
@@ -143,6 +149,7 @@
           removeFromArray(widget.bridges,bridge);
           bridge.remove();
           widget.reflowBridges();
+          widget.updateState();
         }
         bridge.flow = function() {
           bridge.verticalPosition = 0;
@@ -232,6 +239,41 @@
         this.bitlength = length;
         element.css('margin-left', '-' + (length/2 + 1) + 'pc');
       }
+      this.makeState = function() {
+        // We could use HTML5 pushState here, but it's actually more work:
+        //  setting up the webserver, dealing with back button, etc.
+        //  Just set location.hash.
+
+        var hash = "";
+        hash += "#n=" + this.numberfield.val();
+        hash += "&l=" + this.bitlength;
+        for(var i in this.bridges) {
+          hash += "&b=" + this.bridges[i].start + ","
+            +this.bridges[i].end;
+        }
+        return hash;
+      }
+      this.updateState = function() {
+        window.location.hash = this.makeState();
+      }
+      this.setState = function(str) {
+        var tokens = str.substr(1).split("&");
+        this.reset();
+        for(var i in tokens) {
+          if(tokens[i].startsWith("n=")) {
+            this.numberfield.val(tokens[i].substr(2));
+          } else if (tokens[i].startsWith("l=")) {
+            this.extend(parseInt(tokens[i].substr(2)));
+          } else if (tokens[i].startsWith("b=")) {
+            ends = tokens[i].substr(2).split(",");
+            if(ends.length >= 2) {
+              this.makeBridge(parseInt(ends[0]), parseInt(ends[1]));
+            }
+          }
+        }
+        this.updateState();
+        this.updateNumber();
+      }
       this.reflowBridges = function() {
         var maxheight = 0;
         for(var i in this.bridges) {
@@ -244,12 +286,28 @@
           widget.fields.height(0);
         }
       }
+      $(window).on('hashchange', function() {
+        console.log(s + " " + hash);
+        var s = widget.makeState();
+        var hash = window.location.hash;
+        if(hash != s) {
+          widget.setState(hash);
+        }
+      });
 
-      this.extend(32);
-      this.updateNumber();
-      this.makeBridge(6,4);
-      this.makeBridge(2,0);
-      this.makeBridge(8,0);
+      this.reset();
+
+      if(window.location.hash != "#" && window.location.hash != "") {
+        this.setState(window.location.hash.substr(1));
+      } else {
+        this.extend(32);
+        this.updateNumber();
+        this.makeBridge(6,4);
+        this.makeBridge(2,0);
+        this.makeBridge(8,0);
+
+        this.updateState();
+      }
     }
 
   });
@@ -297,6 +355,13 @@ getBase = function(str) {
 removeFromArray = function(array, item) {
   var loc = array.indexOf(item);
   if( loc != -1 ) { array.splice(loc, 1); }
+}
+
+// Well, it's JavaScript, get all monkey-patchy
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
 }
 
 $(document).ready(function() {
