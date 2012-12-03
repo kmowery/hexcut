@@ -65,6 +65,13 @@
           }
         };
       };
+      this.makeMouseLeaveCallback = function(loc) {
+        return function() {
+          if(widget.clicked === null) {
+            $(".bitselected").removeClass("bitselected");
+          }
+        };
+      };
       this.makeClickCallback = function(loc) {
         return function() {
           if(widget.clicked === null) {
@@ -224,11 +231,13 @@
         for(var i = this.bitlength; i < length; i++) {
           this.ids[i] = $('<span>').addClass("bitid").text(i).
             mouseenter(this.makeMouseEnterCallback(i)).
+            mouseleave(this.makeMouseLeaveCallback(i)).
             click(this.makeClickCallback(i));
           this.iddiv.prepend(this.ids[i]);
 
           this.bits[i] = $('<span>').addClass("bit").
             mouseenter(this.makeMouseEnterCallback(i)).
+            mouseleave(this.makeMouseLeaveCallback(i)).
             click(this.makeClickCallback(i));
           this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
           this.updates.push(this.bits[i]);
