@@ -50,8 +50,8 @@
       }
       this.makeMouseEnterCallback = function(loc) {
         return function() {
+          $(".bitselected").removeClass("bitselected");
           if(widget.clicked != null) {
-            $(".bitselected").removeClass("bitselected");
             for(var i = 0; i < widget.bitlength; i++) {
               if( i >= Math.min(widget.clicked, loc) &&
                   i <= Math.max(widget.clicked, loc) ) {
@@ -59,6 +59,9 @@
                 widget.ids[i].addClass("bitselected");
               }
             }
+          } else {
+            widget.bits[loc].addClass("bitselected");
+            widget.ids[loc].addClass("bitselected");
           }
         }
       }
