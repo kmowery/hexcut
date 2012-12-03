@@ -318,9 +318,10 @@
       } else {
         this.extend(32);
         this.updateNumber();
-        this.makeBridge(6,4);
-        this.makeBridge(2,0);
-        this.makeBridge(8,0);
+        this.makeBridge(7,0);
+        this.makeBridge(15,8);
+        this.makeBridge(23,16);
+        this.makeBridge(31,24);
 
         this.updateState();
       }
