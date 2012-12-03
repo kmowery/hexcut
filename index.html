@@ -24,8 +24,23 @@
         <div id="title">HEXCUT</div>
 
         <div id="nav">
-          <span>Help</span>
+          <span><a onclick='$("#help").toggle()'>Help</a></span>
           <span><a href="http://github.com/kmowery/hexcut">GitHub</a></span>
+        </div>
+
+        <div id="help">
+          <div id="helpinner">
+
+            <p> <h1>Hexcut</h1> extracts bit fields from the binary
+            representation of a number. Want to know what bits 17 through 23 are
+            saying? Find out below. </p>
+
+            <p> <h1>How to Use:</h1> In the input box, enter a number to
+            examine. Then, to create a bitfield, click on two bits in the binary
+            representation of your number. You can also set an individual
+            bitfield by clicking on it and typing a value. </p>
+
+          </div>
         </div>
 
         <noscript>Sorry, this site requires JavaScript.</noscript>
