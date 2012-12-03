@@ -384,5 +384,6 @@ if (typeof String.prototype.startsWith != 'function') {
 $(document).ready(function() {
   $("#help").hide();
   $("#hook").bits();
+  $('html').removeClass("js");
 });
 
