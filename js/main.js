@@ -240,7 +240,13 @@
         this.bits[length-1].addClass("bottomleft");
 
         this.bitlength = length;
-        element.css('margin-left', '-' + (length/2 + 1) + 'pc');
+        // CSS doesn't provide a way to make this easy in ANY WAY.
+        // Ideally, we could just check element's width, but the layout hasn't
+        // happened yet. I hate this.
+        element.css('margin-left', '-' + (length/2) + 'pc');
+        element.css('margin-left', "-=" + element.css('padding-left'));
+        element.css('margin-left', "-=" + this.number.css('border-width'));
+        element.css('margin-left', "-=" + element.css('border-width'));
       }
       this.makeState = function() {
         // We could use HTML5 pushState here, but it's actually more work:
