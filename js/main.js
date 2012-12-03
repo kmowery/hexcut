@@ -296,7 +296,6 @@
         }
       }
       $(window).on('hashchange', function() {
-        console.log(s + " " + hash);
         var s = widget.makeState();
         var hash = window.location.hash;
         if(hash != s) {
