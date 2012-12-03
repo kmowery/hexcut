@@ -13,8 +13,8 @@
           else {
             span.text(widget.n.testBit(loc) ? "1" : "0");
           }
-        }
-      }
+        };
+      };
       this.makeFieldUpdateCallback = function(input,start,end) {
         return function() {
           if(isNaN(widget.n)) { input.val('-'); }
@@ -24,8 +24,8 @@
 
             input.val("0x" + widget.n.divide(lower).remainder(width).toString(16));
           }
-        }
-      }
+        };
+      };
       this.makeFieldInputCallback = function(bridge) {
         return function(event) {
           try {
@@ -46,12 +46,12 @@
           widget.updateNumber();
           widget.pushbackNumber();
           return false;
-        }
-      }
+        };
+      };
       this.makeMouseEnterCallback = function(loc) {
         return function() {
           $(".bitselected").removeClass("bitselected");
-          if(widget.clicked != null) {
+          if(widget.clicked !== null) {
             for(var i = 0; i < widget.bitlength; i++) {
               if( i >= Math.min(widget.clicked, loc) &&
                   i <= Math.max(widget.clicked, loc) ) {
@@ -63,11 +63,11 @@
             widget.bits[loc].addClass("bitselected");
             widget.ids[loc].addClass("bitselected");
           }
-        }
-      }
+        };
+      };
       this.makeClickCallback = function(loc) {
         return function() {
-          if(widget.clicked == null) {
+          if(widget.clicked === null) {
             widget.clicked = loc;
             widget.bits[loc].addClass("bitselected");
             widget.ids[loc].addClass("bitselected");
@@ -79,8 +79,8 @@
             $(".bitselected").removeClass("bitselected");
             widget.clicked = null;
           }
-        }
-      }
+        };
+      };
       this.reset = function() {
         element.empty();
 
@@ -101,8 +101,8 @@
         element.append(this.header);
         element.append(this.fields);
 
-        this.numberfield = $('<input type="text">').val("0x")
-          .addClass("ui-widget numberfield");
+        this.numberfield = $('<input type="text">').val("0x").
+          addClass("ui-widget numberfield");
         this.numberfield.bind( 'input', function(event) {
           widget.n = properParseInt(widget.numberfield.val());
           if( !isNaN(widget.n) ) {
@@ -124,26 +124,26 @@
         this.bitfield.append(this.bitdiv);
 
         this.state = this.makeState();
-      }
+      };
 
       // Make the functions
       this.updateNumber = function() {
         for(var v in this.updates) {
           this.updates[v].update();
         }
-      }
+      };
       // Take whatever this.n is, and put it up into this.numberfield
       this.pushbackNumber = function() {
         base = getBase(this.numberfield.val())[0];
         this.numberfield.val(formatNumber(base, this.n));
-      }
+      };
       this.makeBridge = function(start, end) {
         if(start == end) {
           return;
         }
 
         var bridge = $('<div>').addClass("bridge field");
-        bridge.delete = function() {
+        bridge.deleteBridge = function() {
           // Delete all updates
           for(var i in bridge.bits) {
             removeFromArray(widget.updates,bridge.bits[i]);
@@ -153,7 +153,7 @@
           bridge.remove();
           widget.reflowBridges();
           widget.updateState();
-        }
+        };
         bridge.flow = function() {
           bridge.verticalPosition = 0;
           var reservedSlots = [];
@@ -177,7 +177,7 @@
           widget.fields.height(Math.max(widget.fields.height(),
                 bridge.outerHeight(true) * (bridge.verticalPosition+1)));
           return bridge.verticalPosition;
-        }
+        };
 
         bridge.bitfield = $('<div>').addClass("bitfield");
         bridge.start = Math.min(start,end);
@@ -192,9 +192,9 @@
         }
         bridge.append(bridge.bitfield);
 
-        bridge.hex = $('<input type="text">').addClass("bridgevalue")
-          .css('width', (bridge.end-bridge.start) + "em")
-           .on("input", widget.makeFieldInputCallback(bridge));
+        bridge.hex = $('<input type="text">').addClass("bridgevalue").
+          css('width', (bridge.end-bridge.start) + "em").
+          on("input", widget.makeFieldInputCallback(bridge));
         bridge.hex.update = this.makeFieldUpdateCallback(bridge.hex,
             bridge.start, bridge.end);
         widget.updates.push(bridge.hex);
@@ -204,7 +204,7 @@
         widget.fields.append(bridge);
         widget.updateNumber();
 
-        bridge.close = $('<a>').addClass("close").click(bridge.delete);
+        bridge.close = $('<a>').addClass("close").click(bridge.deleteBridge);
         bridge.append(bridge.close);
         bridge.on('hover', function(event) {
           if(event.type === "mouseenter") {
@@ -215,24 +215,24 @@
         });
 
         bridge.flow();
-      }
+      };
       this.extend = function(length) {
         if(this.bitlength > 0) {
           this.ids[this.bitlength-1].removeClass("topleft");
           this.bits[this.bitlength-1].removeClass("bottomleft");
         }
         for(var i = this.bitlength; i < length; i++) {
-          this.ids[i] = $('<span>').addClass("bitid").text(i)
-            .mouseenter(this.makeMouseEnterCallback(i))
-            .click(this.makeClickCallback(i));
-          this.iddiv.prepend(this.ids[i])
+          this.ids[i] = $('<span>').addClass("bitid").text(i).
+            mouseenter(this.makeMouseEnterCallback(i)).
+            click(this.makeClickCallback(i));
+          this.iddiv.prepend(this.ids[i]);
 
-          this.bits[i] = $('<span>').addClass("bit")
-            .mouseenter(this.makeMouseEnterCallback(i))
-            .click(this.makeClickCallback(i));
+          this.bits[i] = $('<span>').addClass("bit").
+            mouseenter(this.makeMouseEnterCallback(i)).
+            click(this.makeClickCallback(i));
           this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
           this.updates.push(this.bits[i]);
-          this.bitdiv.prepend(this.bits[i])
+          this.bitdiv.prepend(this.bits[i]);
         }
         this.ids[0].addClass("topright");
         this.bits[0].addClass("bottomright");
@@ -247,7 +247,7 @@
         element.css('margin-left', "-=" + element.css('padding-left'));
         element.css('margin-left', "-=" + this.number.css('border-width'));
         element.css('margin-left', "-=" + element.css('border-width'));
-      }
+      };
       this.makeState = function() {
         // We could use HTML5 pushState here, but it's actually more work:
         //  setting up the webserver, dealing with back button, etc.
@@ -257,14 +257,13 @@
         hash += "#n=" + this.numberfield.val();
         hash += "&l=" + this.bitlength;
         for(var i in this.bridges) {
-          hash += "&b=" + this.bridges[i].start + ","
-            +this.bridges[i].end;
+          hash += "&b=" + this.bridges[i].start + "," + this.bridges[i].end;
         }
         return hash;
-      }
+      };
       this.updateState = function() {
         window.location.hash = this.makeState();
-      }
+      };
       this.setState = function(str) {
         var tokens = str.substr(1).split("&");
         this.reset();
@@ -272,17 +271,17 @@
           if(tokens[i].startsWith("n=")) {
             this.numberfield.val(tokens[i].substr(2));
           } else if (tokens[i].startsWith("l=")) {
-            this.extend(parseInt(tokens[i].substr(2)));
+            this.extend(parseInt(tokens[i].substr(2),10));
           } else if (tokens[i].startsWith("b=")) {
             ends = tokens[i].substr(2).split(",");
             if(ends.length >= 2) {
-              this.makeBridge(parseInt(ends[0]), parseInt(ends[1]));
+              this.makeBridge(parseInt(ends[0],10), parseInt(ends[1],10));
             }
           }
         }
         this.updateState();
         this.updateNumber();
-      }
+      };
       this.reflowBridges = function() {
         var maxheight = 0;
         for(var i in this.bridges) {
@@ -294,7 +293,7 @@
         } else {
           widget.fields.height(0);
         }
-      }
+      };
       $(window).on('hashchange', function() {
         var s = widget.makeState();
         var hash = window.location.hash;
@@ -305,7 +304,7 @@
 
       this.reset();
 
-      if(window.location.hash != "#" && window.location.hash != "") {
+      if(window.location.hash != "#" && window.location.hash !== "") {
         this.setState(window.location.hash.substr(1));
       } else {
         this.extend(32);
@@ -330,7 +329,7 @@ properParseInt = function(str) {
   } catch (e) {
     return NaN;
   }
-}
+};
 
 formatNumber = function(base, bigint) {
   if(isNaN(bigint)) {
@@ -345,7 +344,7 @@ formatNumber = function(base, bigint) {
   } else {
     throw "Don't know how to format base " + base;
   }
-}
+};
 
 // Returns the [base,number_str] given a string
 getBase = function(str) {
@@ -356,14 +355,14 @@ getBase = function(str) {
   } else {
     return [10, str];
   }
-}
+};
 
 // Can't patch this into Array.prototype, otherwise BigInteger fails with some
 // horrible error.
 removeFromArray = function(array, item) {
   var loc = array.indexOf(item);
   if( loc != -1 ) { array.splice(loc, 1); }
-}
+};
 
 // Well, it's JavaScript, get all monkey-patchy
 if (typeof String.prototype.startsWith != 'function') {
