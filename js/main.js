@@ -21,15 +21,27 @@
           else {
             var lower = BigInteger("0").setBit(start);
             var width = BigInteger("0").setBit(end-start+1);
+            var prefix = "0x";
 
-            input.val("0x" + widget.n.divide(lower).remainder(width).toString(16));
+            if(end-start <= 2) {
+              prefix = "";
+            }
+            input.val(prefix + widget.n.divide(lower).remainder(width).toString(16));
           }
         };
       };
       this.makeFieldInputCallback = function(bridge) {
         return function(event) {
           try {
-            var temp = properParseInt($(this).val());
+            var str = $(this).val();
+            // if we are a short bridge, add a 0x to the input string
+            // Without this, the number parses very badly (since we remove the
+            // 0x on short bridges to fit the number)
+            if(bridge.end - bridge.start <= 2) {
+              str = "0x" + str;
+            }
+
+            var temp = properParseInt(str);
 
             if(!isNaN(widget.n)) {
               for(var i = bridge.start; i <= bridge.end; i++) {
