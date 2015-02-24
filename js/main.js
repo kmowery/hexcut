@@ -328,12 +328,16 @@
       if(window.location.hash != "#" && window.location.hash !== "") {
         this.setState(window.location.hash.substr(1));
       } else {
-        this.extend(32);
+        this.extend(64);
         this.updateNumber();
         this.makeBridge(7,0);
         this.makeBridge(15,8);
         this.makeBridge(23,16);
         this.makeBridge(31,24);
+        this.makeBridge(39,32);
+        this.makeBridge(47,40);
+        this.makeBridge(55,48);
+        this.makeBridge(63,56);
 
         this.updateState();
       }
