@@ -100,6 +100,14 @@
           }
         };
       };
+      this.makeDblClickCallback = function(loc) {
+        return function() {
+          widget.makeBridge(loc, loc);
+          widget.updateState();
+          $(".bitselected").removeClass("bitselected");
+          widget.clicked = null;
+        };
+      };
       this.reset = function() {
         element.empty();
 
@@ -157,10 +165,6 @@
         this.numberfield.val(formatNumber(base, this.n));
       };
       this.makeBridge = function(start, end) {
-        if(start == end) {
-          return;
-        }
-
         var bridge = $('<div>').addClass("bridge field");
         bridge.deleteBridge = function() {
           // Delete all updates
@@ -212,7 +216,7 @@
         bridge.append(bridge.bitfield);
 
         bridge.hex = $('<input type="text">').addClass("bridgevalue").
-          css('width', (bridge.end-bridge.start) + "em").
+          css('width', Math.max(bridge.end-bridge.start,1) + "em").
           on("input", widget.makeFieldInputCallback(bridge));
         bridge.hex.update = this.makeFieldUpdateCallback(bridge.hex,
             bridge.start, bridge.end);
@@ -244,13 +248,15 @@
           this.ids[i] = $('<span>').addClass("bitid").text(i).
             mouseenter(this.makeMouseEnterCallback(i)).
             mouseleave(this.makeMouseLeaveCallback(i)).
-            click(this.makeClickCallback(i));
+            click(this.makeClickCallback(i)).
+            dblclick(this.makeDblClickCallback(i));
           this.iddiv.prepend(this.ids[i]);
 
           this.bits[i] = $('<span>').addClass("bit").
             mouseenter(this.makeMouseEnterCallback(i)).
             mouseleave(this.makeMouseLeaveCallback(i)).
-            click(this.makeClickCallback(i));
+            click(this.makeClickCallback(i)).
+            dblclick(this.makeDblClickCallback(i));
           this.bits[i].update = this.makeUpdateCallback(this.bits[i], i);
           this.updates.push(this.bits[i]);
           this.bitdiv.prepend(this.bits[i]);
